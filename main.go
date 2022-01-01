@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/alejandroacev/todo_go/controllers"
+	controllers "github.com/alejandroacev/todo_go/controllers/task"
 	"github.com/gorilla/mux"
 )
 
@@ -18,6 +18,6 @@ func main() {
 	router.HandleFunc("/create", controllers.Create)
 	// http.Handle("/", router)
 
-	http.ListenAndServe(":8080", router)
 	fmt.Println("Server running at 8080")
+	http.ListenAndServe(":8080", router)
 }
