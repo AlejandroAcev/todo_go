@@ -5,24 +5,43 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/alejandroacev/todo_go/connector"
 	"github.com/alejandroacev/todo_go/models"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var (
-	err             error
-	ctx, collection = connector.Collection()
-)
-
 func Show(w http.ResponseWriter, r *http.Request) {
-	// var tasks []models.Task
+	params := mux.Vars(r)
+	id := params["id"]
 
+	task, err := models.GetTaskByID(id)
+
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(task)
+}
+
+func ShowAll(w http.ResponseWriter, r *http.Request) {
+	var tasks []*models.Task
+
+	tasks, err := models.GetAllTask()
+
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tasks)
 }
 
 func Create(w http.ResponseWriter, r *http.Request) {
 	var task models.Task
-	err = json.NewDecoder(r.Body).Decode(&task)
+	err := json.NewDecoder(r.Body).Decode(&task)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

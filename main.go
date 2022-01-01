@@ -13,10 +13,12 @@ func main() {
 	router := mux.NewRouter()
 	fmt.Println("Starting server")
 
-	// router.HandleFunc("/", HomeHandler)
-	router.HandleFunc("/show", controllers.Show)
+	// General Actions
 	router.HandleFunc("/create", controllers.Create)
-	// http.Handle("/", router)
+
+	// TASK Actions
+	router.HandleFunc("/tasks", controllers.ShowAll)
+	router.HandleFunc("/task/{id}", controllers.Show)
 
 	fmt.Println("Server running at 8080")
 	http.ListenAndServe(":8080", router)

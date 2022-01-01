@@ -23,17 +23,6 @@ type Task struct {
 	UpdatedAt   time.Time          `bson:"updated_at"`
 }
 
-func CreateTask(task *Task) (*Task, error) {
-
-	_, err := collection.InsertOne(ctx, task)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return task, nil
-}
-
 func FilterTask(filter interface{}) ([]*Task, error) {
 	var tasks []*Task
 	cursor, err := collection.Find(ctx, filter)
@@ -74,4 +63,22 @@ func FilterTask(filter interface{}) ([]*Task, error) {
 func GetAllTask() ([]*Task, error) {
 	filter := bson.D{{}}
 	return FilterTask(filter)
+}
+
+func GetTaskByID(ID string) (*Task, error) {
+	filter := bson.D{primitive.E{Key: "_id", Value: ID}}
+
+	tasks, err := FilterTask(filter)
+
+	return tasks[0], err
+}
+
+func CreateTask(task *Task) (*Task, error) {
+	_, err := collection.InsertOne(ctx, task)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
 }
