@@ -14,13 +14,13 @@ var (
 )
 
 type Task struct {
-	ID          primitive.ObjectID `bson:"_id"`
-	Title       string             `bson:"title"`
-	Description string             `bson:"description"`
-	Tags        []string           `bson:"tags"`
-	Completed   bool               `bson:"completed"`
-	CreatedAt   time.Time          `bson:"created_at"`
-	UpdatedAt   time.Time          `bson:"updated_at"`
+	ID          primitive.ObjectID `bson:"_id" json:"id"`
+	Title       string             `bson:"title" json:"title"`
+	Description string             `bson:"description" json:"description"`
+	Tags        []string           `bson:"tags" json:"tags"`
+	Completed   bool               `bson:"completed" json:"completed"`
+	CreatedAt   time.Time          `bson:"created_at" json:"createdAt"`
+	UpdatedAt   time.Time          `bson:"updated_at" json:"updatedAt"`
 }
 
 func FilterTask(filter interface{}) ([]*Task, error) {
