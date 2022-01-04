@@ -3,21 +3,26 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/alejandroacev/todo_go/models"
 	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func Show(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
 
+	var task *models.Task
 	task, err := models.GetTaskByID(id)
 
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
+		return
+	}
+
+	if task == nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -53,10 +58,6 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task.ID = primitive.NewObjectID()
-	task.CreatedAt = time.Now()
-	task.UpdatedAt = time.Now()
-
 	createdTask, err := models.CreateTask(&task)
 
 	if err != nil {
@@ -66,5 +67,49 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(createdTask)
+
+}
+
+func Update(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	id := params["id"]
+
+	var currentTask *models.Task
+	currentTask, err := models.GetTaskByID(id)
+
+	if id == "" || currentTask == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var newTaskFields *models.Task
+	err = json.NewDecoder(r.Body).Decode(&newTaskFields)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if newTaskFields.Title == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Empty title"))
+		return
+	}
+
+	updatedTask, err := models.UpdateTask(id, newTaskFields)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(updatedTask)
 
 }

@@ -14,11 +14,12 @@ func main() {
 	fmt.Println("Starting server")
 
 	// General Actions
-	router.HandleFunc("/create", controllers.Create)
+	router.HandleFunc("/create", controllers.Create).Methods("POST")
 
 	// TASK Actions
-	router.HandleFunc("/tasks", controllers.ShowAll)
-	router.HandleFunc("/task/{id}", controllers.Show)
+	router.HandleFunc("/tasks", controllers.ShowAll).Methods("GET")
+	router.HandleFunc("/task/{id}", controllers.Show).Methods("GET")
+	router.HandleFunc("/task/{id}", controllers.Update).Methods("POST", "PUT")
 
 	fmt.Println("Server running at 8080")
 	http.ListenAndServe(":8080", router)
