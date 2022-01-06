@@ -13,6 +13,8 @@ func main() {
 	router := mux.NewRouter()
 	fmt.Println("Starting server")
 
+	router.PathPrefix("/api")
+
 	// General Actions
 	router.HandleFunc("/create", controllers.Create).Methods("POST")
 
