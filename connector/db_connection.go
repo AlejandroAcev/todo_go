@@ -3,7 +3,9 @@ package connector
 import (
 	"context"
 	"log"
+	"os"
 
+	"github.com/alejandroacev/todo_go/util"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -17,8 +19,14 @@ var collection *mongo.Collection
 var ctx = context.TODO()
 
 func Collection() (context.Context, *mongo.Collection) {
+	// Loads the mongoURI
+	MONGO_URI, err := util.GetMongoURI()
 
-	clientOptions := options.Client().ApplyURI("mongodb+srv://alejacevgonz:Calamard0.1.m@mongogeneric.ujgee.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+	if err != nil {
+		os.Exit(1)
+	}
+
+	clientOptions := options.Client().ApplyURI(MONGO_URI)
 	client, err := mongo.Connect(ctx, clientOptions)
 
 	if err != nil {
