@@ -67,7 +67,6 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(createdTask)
-
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
@@ -111,5 +110,34 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(updatedTask)
+}
 
+func Delete(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	id := params["id"]
+
+	var task *models.Task
+	task, err := models.GetTaskByID(id)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	if task == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	_, err = models.DeleteTaskByID(id)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
 }

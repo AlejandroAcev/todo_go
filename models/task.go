@@ -132,3 +132,21 @@ func UpdateTask(id string, updatedTask *Task) (*Task, error) {
 
 	return tasks[0], nil
 }
+
+func DeleteTaskByID(id string) (bool, error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return false, err
+	}
+
+	filter := bson.D{primitive.E{Key: "_id", Value: oid}}
+
+	result, err := collection.DeleteOne(ctx, filter)
+
+	if result.DeletedCount <= 0 {
+		return false, err
+	}
+
+	return true, err
+}
