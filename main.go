@@ -6,6 +6,7 @@ import (
 
 	"github.com/alejandroacev/todo_go/routes"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -16,5 +17,10 @@ func main() {
 	port := routes.InitializeRoutes(router)
 
 	fmt.Println("Server running at", port)
-	http.ListenAndServe(":"+port, router)
+	handler := cors.Default().Handler(router)
+	err := http.ListenAndServe(port, handler)
+
+	if err != nil {
+		fmt.Println("Error running server", err)
+	}
 }
